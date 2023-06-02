@@ -1,0 +1,37 @@
+/* App.css */
+
+h,
+p {
+    color: white;
+}
+
+.App {
+    height: 200vh;
+    padding-top: 56px;
+}
+
+.bg {
+    background-image: url("../public/images/camouflage.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+}
+
+.carousel-img {
+    width: 95%;
+    height: 30vh;
+    object-fit: cover;
+}
+
+.carousel-wrapper {
+    width: 90%;
+    align-items: center;
+    margin: 2% 5%;
+}
+
+@media screen and (max-width: 576px) {
+    .carousel-img {
+        width: 100%;
+        height: auto;
+    }
+}
