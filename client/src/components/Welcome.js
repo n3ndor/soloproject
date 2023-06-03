@@ -1,11 +1,10 @@
-// Carousel.js
 import React from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-// In your component
-const CarouselComponent = () => {
+
+const Welcome = () => {
     const settings = {
         dots: true,
         infinite: true,
@@ -32,6 +31,9 @@ const CarouselComponent = () => {
     };
     return (
         <div className='carousel-wrapper'>
+            <h2>Welcome to Galactic Paintball!</h2>
+            <p>We promise you the best paintball experience in the universe and beyond.</p>
+
             <Slider {...settings}>
                 {Array.from({ length: 15 }, (_, i) => i + 1).map((num) => (
                     <div key={num} >
@@ -43,8 +45,10 @@ const CarouselComponent = () => {
                     </div>
                 ))}
             </Slider>
+            <p>Prepare yourself for an unforgettable adventure and challenge yourself in one of our numerous diverse maps. </p>
+            <p> Choose your weapon and let the games begin!</p>
         </div>
     );
 }
 
-export default CarouselComponent;
+export default Welcome;

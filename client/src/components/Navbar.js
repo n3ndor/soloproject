@@ -8,7 +8,7 @@ const NavBar = () => {
         <div className="container-fluid">
             <Navbar collapseOnSelect expand="sm" bg="dark" variant="dark" fixed="top" className="p-3">
                 <Navbar.Brand>
-                    <Link to="carousel" smooth={true}>Logo</Link>
+                    <Link to="#" smooth={true} style={{ cursor: "pointer" }}>Galactical Paintball</Link>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">

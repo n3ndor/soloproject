@@ -2,18 +2,19 @@
 import React from 'react';
 import './App.css';
 import NavBar from './components/Navbar';
-import CarouselComponent from './components/Carousel';
+import Welcome from './components/Welcome';
 import Maps from './components/Maps';
 import Weapons from './components/Weapons';
 import Extras from './components/Extras';
+import Contact from './components/Contact';
 import { Element } from 'react-scroll';
 
 function App() {
   return (
     <div className="App bg">
       <NavBar />
-      <Element name="carousel" className="element">
-        <CarouselComponent />
+      <Element name="welcome" className="element">
+        <Welcome />
       </Element>
       <Element name="maps" className="element">
         <Maps />
@@ -23,6 +24,9 @@ function App() {
       </Element>
       <Element name="extras" className="element">
         <Extras />
+      </Element>
+      <Element name="contact" className="element">
+        <Contact />
       </Element>
     </div>
   );
