@@ -9,17 +9,23 @@ const CarouselComponent = () => {
     const settings = {
         dots: true,
         infinite: true,
+        autoplay: true,
         speed: 500,
+        draggable: true,
+
         slidesToShow: 3,
         slidesToScroll: 1,
         responsive: [
             {
                 breakpoint: 600,
                 settings: {
+                    dots: true,
+                    infinite: true,
+                    autoplay: true,
+                    speed: 500,
                     slidesToShow: 1,
                     slidesToScroll: 1,
-                    infinite: true,
-                    dots: true
+
                 }
             }
         ]
