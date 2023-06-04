@@ -39,12 +39,14 @@ const Welcome = () => {
                     <div key={num} >
                         <img
                             className="carousel-img"
-                            src={`/images/pic${num}.jpg`}
+                            src={`/images//pics/pic${num}.jpg`}
                             alt={`Slide ${num}`}
                         />
                     </div>
                 ))}
             </Slider>
+            <br />
+            <br />
             <p>Prepare yourself for an unforgettable adventure and challenge yourself in one of our numerous diverse maps. </p>
             <p> Choose your weapon and let the games begin!</p>
         </div>

@@ -8,19 +8,30 @@ const NavBar = () => {
         <div className="container-fluid">
             <Navbar collapseOnSelect expand="sm" bg="dark" variant="dark" fixed="top" className="p-3">
                 <Navbar.Brand>
-                    <Link to="#" smooth={true} style={{ cursor: "pointer" }}>Galactical Paintball</Link>
+                    <Link to="welcome" smooth={true} style={{ cursor: "pointer", textDecoration: 'none' }}><span>Galactical Paintball</span></Link>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <div className="d-flex justify-content-between w-100">
                         <Nav>
-                            <Nav.Link><Link to="maps" smooth={true}>Maps</Link></Nav.Link>
-                            <Nav.Link><Link to="weapons" smooth={true}>Weapons</Link></Nav.Link>
-                            <Nav.Link><Link to="extras" smooth={true}>Extras</Link></Nav.Link>
-                            <Nav.Link><Link to="contact" smooth={true}>Contact</Link></Nav.Link>
+                            {["welcome", "maps", "weapons", "extras", "contact"].map((section) => (
+                                <Nav.Link key={section}>
+                                    <Link
+                                        activeClass="active-link"
+                                        to={section}
+                                        spy={true}
+                                        smooth={true}
+                                        offset={-50}
+                                        duration={500}
+                                        style={{ textDecoration: 'none' }}
+                                    >
+                                        <span>{section.charAt(0).toUpperCase() + section.slice(1)}</span>
+                                    </Link>
+                                </Nav.Link>
+                            ))}
                         </Nav>
                         <Nav>
-                            <Nav.Link href="#login">Login</Nav.Link>
+                            <Nav.Link href="#login" style={{ textDecoration: 'none' }}>Login</Nav.Link>
                         </Nav>
                     </div>
                 </Navbar.Collapse>
