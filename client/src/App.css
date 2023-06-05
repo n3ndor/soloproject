@@ -1,5 +1,3 @@
-/* App.css */
-
 * {
     color: white;
 }
@@ -39,11 +37,4 @@
     width: 90%;
     align-items: center;
     margin: 2% 5%;
-}
-
-@media screen and (max-width: 576px) {
-    .carousel-img {
-        width: 100%;
-        height: auto;
-    }
 }

@@ -31,7 +31,7 @@ const Welcome = () => {
     };
     return (
         <div className='carousel-wrapper'>
-            <h2>Welcome to Galactic Paintball!</h2>
+            <h2>Welcome to Galactical Paintball!</h2>
             <p>We promise you the best paintball experience in the universe and beyond.</p>
 
             <Slider {...settings}>
