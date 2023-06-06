@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Dropdown, Form, Button, Nav } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const LoginRegister = ({ hamburgerOpen, isLoggedIn }) => {
     const [showLogin, setShowLogin] = useState(true);
@@ -11,7 +12,9 @@ const LoginRegister = ({ hamburgerOpen, isLoggedIn }) => {
     if (isLoggedIn) {
         return (
             <Nav className="ml-auto">
-                <Nav.Link>New Booking</Nav.Link>
+                <Nav.Link>
+                    <Link to="/new-booking" style={{ textDecoration: 'none', color: '#fff' }}>New Booking</Link>
+                </Nav.Link>
                 <Nav.Link>Old Bookings</Nav.Link>
                 <Nav.Link>Logout</Nav.Link>
             </Nav>
@@ -80,4 +83,5 @@ const LoginRegister = ({ hamburgerOpen, isLoggedIn }) => {
         );
     }
 }
+
 export default LoginRegister;

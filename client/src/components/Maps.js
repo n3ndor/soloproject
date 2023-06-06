@@ -1,4 +1,3 @@
-// Maps.js
 import React from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
@@ -11,7 +10,6 @@ const Maps = () => {
         autoplay: true,
         speed: 500,
         draggable: true,
-
         slidesToShow: 3,
         slidesToScroll: 1,
         responsive: [

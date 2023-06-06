@@ -4,7 +4,7 @@
 
 .App {
     height: auto;
-    padding-top: 56px;
+    padding-top: 70px;
 }
 
 .bg {
@@ -12,6 +12,8 @@
     background-size: cover;
     background-position: center;
     background-repeat: repeat;
+    min-height: 100vh;
+    /* max-width: 100vh; */
 }
 
 .active-link span {
