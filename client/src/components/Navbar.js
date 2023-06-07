@@ -6,7 +6,7 @@ import LoginRegister from './LoginRegister';
 
 const NavBar = () => {
     const [open, setOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(true); // CHANGE FOR LOGGED IN (true) OR LOGGED OUT (false)
+    const [isLoggedIn, /*setIsLoggedIn*/] = useState(false); // CHANGE FOR LOGGED IN (true) OR LOGGED OUT (false)
 
     const location = useLocation();
 
@@ -21,7 +21,7 @@ const NavBar = () => {
                     {location.pathname === '/' && (
                         <Nav>
                             {["welcome", "maps", "weapons", "extras", "contact"].map((section) => (
-                                <Nav.Link key={section}>
+                                <Nav.Item key={section}>
                                     <ScrollLink
                                         activeClass="active-link"
                                         to={section}
@@ -33,7 +33,7 @@ const NavBar = () => {
                                     >
                                         <span>{section.charAt(0).toUpperCase() + section.slice(1)}</span>
                                     </ScrollLink>
-                                </Nav.Link>
+                                </Nav.Item>
                             ))}
                         </Nav>
                     )}

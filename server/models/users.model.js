@@ -5,15 +5,13 @@ const bcrypt = require("bcrypt");
 const UserSchema = mongoose.Schema({
     fullName: {
         type: String,
-    },
-    userName: {
-        type: String,
-        required: [true, "User Name is required"],
-        minlength: [2, "User Name must be at least 2 characters long"],
-        unique: true,
+        required: [true, "Name is required"],
+        minlength: [2, "Name must be at least 2 characters long"],
     },
     email: {
         type: String,
+        required: [true, "Email is required"],
+        unique: true,
     },
     password: {
         type: String,
@@ -30,6 +28,6 @@ UserSchema.pre('save', async function (next) {
     next();
 });
 
-UserSchema.plugin(uniqueValidator, { message: 'User Name must be unique.' });
+UserSchema.plugin(uniqueValidator, { message: 'Email must be unique.' });
 
 module.exports = mongoose.model("User", UserSchema);

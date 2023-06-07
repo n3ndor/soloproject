@@ -31,7 +31,7 @@ const StepExtras = ({ next, setData, data }) => {
                                 src={`/images/extras/e_${extraName}.jpg`}
                                 alt={extraName}
                                 thumbnail
-                                style={selectedExtras.includes(extraName) ? { border: '2px solid green' } : {}}
+                                style={selectedExtras.includes(extraName) ? { border: '3px solid green', boxShadow: "0px 0px 10px 5px yellow" } : {}}
                             />
                             <div style={{ textAlign: 'center', marginTop: '10px' }}>
                                 {extraName.charAt(0).toUpperCase() + extraName.slice(1)}

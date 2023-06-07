@@ -2,11 +2,11 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import NavBar from './components/Navbar';
-import Welcome from './components/Welcome';
-import Maps from './components/Maps';
-import Weapons from './components/Weapons';
-import Extras from './components/Extras';
-import Contact from './components/Contact';
+import Welcome from './components/sections/Welcome';
+import Maps from './components/sections/Maps';
+import Weapons from './components/sections/Weapons';
+import Extras from './components/sections/Extras';
+import Contact from './components/sections/Contact';
 import NewBooking from './components/NewBooking';
 import { Element } from 'react-scroll';
 

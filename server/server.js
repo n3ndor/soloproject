@@ -1,15 +1,19 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
+const userRoutes = require('./routes/users.routes');
+const bookingRoutes = require('./routes/bookings.routes');
 
+require('./config/mongoose.config');
 
+app.use(cors());
 app.use(express.json());
 userRoutes(app);
+bookingRoutes(app);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
-
-require('./config/mongoose.config');
 
 app.use((err, req, res, next) => {
     if (err.name === 'ValidationError') {
@@ -19,9 +23,6 @@ app.use((err, req, res, next) => {
     }
 });
 
-app.use(function (req, res, next) {
-    next();
-});
 
 const port = process.env.PORT || 8000;
-server.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(port, () => console.log(`Server running on port ${port}`));

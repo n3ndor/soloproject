@@ -14,7 +14,7 @@ const StepDate = ({ next, setData, data }) => {
     return (
         <div className='m-3'>
             <h2 className='p-3'>Choose Date</h2>
-            <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
+            <DatePicker className='text-black' selected={startDate} onChange={(date) => setStartDate(date)} />
             <Button className='m-1 bg-success' onClick={handleClick}>Next</Button>
         </div>
     );
