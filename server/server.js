@@ -1,8 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
 const userRoutes = require('./routes/users.routes');
 const bookingRoutes = require('./routes/bookings.routes');
+
 
 require('./config/mongoose.config');
 
@@ -19,6 +21,7 @@ app.use((err, req, res, next) => {
     if (err.name === 'ValidationError') {
         res.status(400).json({ errors: err.errors });
     } else {
+        console.log(err);
         res.status(500).json({ message: "An unexpected error occurred. Please try again." });
     }
 });

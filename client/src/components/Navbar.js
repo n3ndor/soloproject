@@ -6,7 +6,7 @@ import LoginRegister from './LoginRegister';
 
 const NavBar = () => {
     const [open, setOpen] = useState(false);
-    const [isLoggedIn, /*setIsLoggedIn*/] = useState(false); // CHANGE FOR LOGGED IN (true) OR LOGGED OUT (false)
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // CHANGE FOR LOGGED IN (true) OR LOGGED OUT (false)
 
     const location = useLocation();
 

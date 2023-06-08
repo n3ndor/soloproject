@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Dropdown, Form, Button, Nav } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const LoginRegister = ({ hamburgerOpen, isLoggedIn }) => {
     const [showLogin, setShowLogin] = useState(true);
@@ -13,6 +14,7 @@ const LoginRegister = ({ hamburgerOpen, isLoggedIn }) => {
     const toggleView = () => {
         setShowLogin(!showLogin);
     }
+
     const handleInputChange = (event) => {
         setFormData({
             ...formData,
@@ -41,39 +43,33 @@ const LoginRegister = ({ hamburgerOpen, isLoggedIn }) => {
             setPasswordError(null);
         }
 
-        if (!showLogin && !formData.fullName) {
+        if (!showLogin && !formData.userName) {
             setNameError('Name is required');
             return;
         } else {
             setNameError(null);
         }
-        const endpoint = showLogin ? "/api/login" : "/api/register";
 
-        const response = await fetch(endpoint, {
-            method: "POST",
-            body: JSON.stringify(formData),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
-
-        if (!response.ok) {
-            const message = await response.text();
-            alert('An error occurred: ' + message);
-            return;
-        }
-
-        const data = await response.json();
-
-        if (response.ok) {
+        try {
+            const endpoint = showLogin ? "/api/login" : "/api/register";
+            const response = await axios.post(`http://localhost:8000${endpoint}`, formData);
             // Store the user token in local storage
-            localStorage.setItem("usertoken", data.token);
-
+            localStorage.setItem("usertoken", response.data.token);
             // Redirect to the new booking page
             navigate("/new-booking");
-        } else {
+        } catch (error) {
             // Show error message
-            alert(data.message);
+            if (error.response) {
+                console.log(error.response);
+                // The request was made and the server responded with a status code outside of the range 2xx
+                alert('An error occurred: ' + error.response.data);
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error('No response received:', error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error('Error', error.message);
+            }
         }
     }
     if (isLoggedIn) {
@@ -118,7 +114,7 @@ const LoginRegister = ({ hamburgerOpen, isLoggedIn }) => {
                             <Form onSubmit={handleFormSubmit}>
                                 <Form.Group>
                                     <Form.Label>Name</Form.Label>
-                                    <Form.Control type="text" name="fullName" onChange={handleInputChange} placeholder="Enter name" />
+                                    <Form.Control type="text" name="userName" onChange={handleInputChange} placeholder="Enter name" />
                                 </Form.Group>
 
                                 <Form.Group>
