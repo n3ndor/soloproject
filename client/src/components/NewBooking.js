@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import Stepper from 'react-stepper-horizontal';
-import StepMap from './bookingSteps/StepMap';
-import StepWeapon from './bookingSteps/StepWeapon';
-import StepExtras from './bookingSteps/StepExtras';
-import StepDate from './bookingSteps/StepDate';
-import StepConfirm from './bookingSteps/StepConfirm';
+import StepMap from './steps/StepMap';
+import StepWeapon from './steps/StepWeapon';
+import StepExtras from './steps/StepExtras';
+import StepDate from './steps/StepDate';
+import StepConfirm from './steps/StepConfirm';
 
 const NewBooking = () => {
     const [currentStep, setCurrentStep] = useState(0);

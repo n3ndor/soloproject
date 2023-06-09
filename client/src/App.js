@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import NavBar from './components/Navbar';
@@ -9,36 +9,42 @@ import Extras from './components/sections/Extras';
 import Contact from './components/sections/Contact';
 import NewBooking from './components/NewBooking';
 import { Element } from 'react-scroll';
+import UserContext from './UserContext';
 
 function App() {
+
+  const [user, setUser] = useState(null);
+
   return (
-    <BrowserRouter>
-      <div className="App bg">
-        <NavBar />
-        <Routes>
-          <Route path="/" element={
-            <>
-              <Element name="welcome" className="element">
-                <Welcome />
-              </Element>
-              <Element name="maps" className="element">
-                <Maps />
-              </Element>
-              <Element name="weapons" className="element">
-                <Weapons />
-              </Element>
-              <Element name="extras" className="element">
-                <Extras />
-              </Element>
-              <Element name="contact" className="element">
-                <Contact />
-              </Element>
-            </>
-          } />
-          <Route path="/new-booking" element={<NewBooking />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <UserContext.Provider value={{ user, setUser }}>
+      <BrowserRouter>
+        <div className="App bg">
+          <NavBar />
+          <Routes>
+            <Route path="/" element={
+              <>
+                <Element name="welcome" className="element">
+                  <Welcome />
+                </Element>
+                <Element name="maps" className="element">
+                  <Maps />
+                </Element>
+                <Element name="weapons" className="element">
+                  <Weapons />
+                </Element>
+                <Element name="extras" className="element">
+                  <Extras />
+                </Element>
+                <Element name="contact" className="element">
+                  <Contact />
+                </Element>
+              </>
+            } />
+            <Route path="/new-booking" element={<NewBooking />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </UserContext.Provider >
   );
 }
 

@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
-import { Navbar, Nav } from 'react-bootstrap';
+import React, { useState, useContext } from 'react';
+import UserContext from "../UserContext";
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 import { useLocation, Link as RouterLink } from 'react-router-dom';
 import { Link as ScrollLink } from 'react-scroll';
+import Dropdown from 'react-bootstrap/Dropdown';
 import LoginRegister from './LoginRegister';
 
 const NavBar = () => {
-    const [open, setOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // CHANGE FOR LOGGED IN (true) OR LOGGED OUT (false)
 
-    const location = useLocation();
+    const [open, setOpen] = useState(false);
+    const currentLocation = useLocation();
+    const { user, setUser } = useContext(UserContext);
 
     return (
         <div>
@@ -18,10 +21,10 @@ const NavBar = () => {
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setOpen(!open)} />
                 <Navbar.Collapse id="responsive-navbar-nav">
-                    {location.pathname === '/' && (
+                    {currentLocation.pathname === '/' && (
                         <Nav>
                             {["welcome", "maps", "weapons", "extras", "contact"].map((section) => (
-                                <Nav.Item key={section}>
+                                <Nav.Item key={section} className="nav-item">
                                     <ScrollLink
                                         activeClass="active-link"
                                         to={section}
@@ -37,13 +40,17 @@ const NavBar = () => {
                             ))}
                         </Nav>
                     )}
-                    <Nav className="ml-auto d-sm-none">
-                        <LoginRegister hamburgerOpen={open} isLoggedIn={isLoggedIn} />
+                    <Nav className="ml-auto">
+                        <Dropdown className='ml-auto d-none d-sm-block'>
+                            <Dropdown.Toggle as="a" style={{ textDecoration: 'none', color: 'white' }}>
+                                Login
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu className="bg-dark m-1 p-3 border-success custom-dropdown" style={{ minWidth: '300px' }}>
+                                <LoginRegister user={user} setUser={setUser} setOpen={setOpen} />
+                            </Dropdown.Menu>
+                        </Dropdown>
                     </Nav>
                 </Navbar.Collapse>
-                <div className="d-none d-sm-block">
-                    <LoginRegister hamburgerOpen={open} isLoggedIn={isLoggedIn} />
-                </div>
             </Navbar>
         </div>
     );

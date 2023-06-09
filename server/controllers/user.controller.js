@@ -4,8 +4,10 @@ const jwt = require('jsonwebtoken');
 
 const createTokenAndSend = (user, res) => {
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-    res.cookie("usertoken", token, { httpOnly: true }).json({ userId: user._id });
+    const { password, ...userWithoutPassword } = user.toObject();
+    res.cookie("usertoken", token, { httpOnly: true }).json(userWithoutPassword);
 }
+
 
 
 const registerUser = (req, res, next) => {

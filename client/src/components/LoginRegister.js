@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
-import { Dropdown, Form, Button, Nav } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Nav } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const LoginRegister = ({ hamburgerOpen, isLoggedIn }) => {
+const LoginRegister = ({ open, setOpen, user, setUser }) => {
     const [showLogin, setShowLogin] = useState(true);
     const [formData, setFormData] = useState({});
     const [passwordError, setPasswordError] = useState(null);
     const [emailError, setEmailError] = useState(null);
     const [nameError, setNameError] = useState(null);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            setOpen(false);
+            navigate("/");
+        }
+    }, [user, navigate, setOpen]);
 
     const toggleView = () => {
         setShowLogin(!showLogin);
@@ -22,131 +30,122 @@ const LoginRegister = ({ hamburgerOpen, isLoggedIn }) => {
         });
     };
 
-    const handleFormSubmit = async (event) => {
-        event.preventDefault();
+    const handleLogout = () => {
+        setUser(null);
+        localStorage.removeItem("usertoken");
+        navigate("/");
+    };
 
-        // Validation
+    const validateFormData = () => {
         if (!formData.email) {
             setEmailError('Email is required');
-            return;
-        } else {
-            setEmailError(null);
+            return false;
         }
 
         if (!formData.password) {
             setPasswordError('Password is required');
-            return;
+            return false;
         } else if (!showLogin && formData.password !== formData.confirmPassword) {
             setPasswordError('Passwords do not match');
-            return;
-        } else {
-            setPasswordError(null);
+            return false;
         }
 
         if (!showLogin && !formData.userName) {
             setNameError('Name is required');
-            return;
-        } else {
-            setNameError(null);
+            return false;
         }
 
+        return true;
+    }
+
+    const submitForm = async (endpoint) => {
         try {
-            const endpoint = showLogin ? "/api/login" : "/api/register";
-            const response = await axios.post(`http://localhost:8000${endpoint}`, formData);
-            // Store the user token in local storage
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}${endpoint}`, formData);
             localStorage.setItem("usertoken", response.data.token);
-            // Redirect to the new booking page
-            navigate("/new-booking");
+            setUser(response.data);
+            setError(null);
+            setOpen(false);
         } catch (error) {
-            // Show error message
             if (error.response) {
-                console.log(error.response);
-                // The request was made and the server responded with a status code outside of the range 2xx
-                alert('An error occurred: ' + error.response.data);
-            } else if (error.request) {
-                // The request was made but no response was received
-                console.error('No response received:', error.request);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.error('Error', error.message);
+                setError('An error occurred: ' + error.response.data);
             }
         }
+    };
+
+    const handleFormSubmit = (event) => {
+        event.preventDefault();
+
+        setEmailError(null);
+        setPasswordError(null);
+        setNameError(null);
+
+        if (!validateFormData()) {
+            return;
+        }
+
+        const endpoint = showLogin ? "/api/login" : "/api/register";
+        submitForm(endpoint);
     }
-    if (isLoggedIn) {
+
+    if (user) {
         return (
             <Nav className="ml-auto">
                 <Link to="/new-booking" className="nav-link" style={{ textDecoration: 'none', color: '#fff' }}>New Booking</Link>
-
                 <Nav.Link>Old Bookings</Nav.Link>
-                <Nav.Link>Logout</Nav.Link>
+                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
             </Nav>
         );
     } else {
         return (
-            <Dropdown>
-                <Dropdown.Toggle as="a" style={{ textDecoration: 'none', color: 'white' }}>
-                    Login
-                </Dropdown.Toggle>
+            <Form onSubmit={handleFormSubmit}>
+                {showLogin ? (
+                    <div>
+                        <Form.Group>
+                            <Form.Label>Email address</Form.Label>
+                            <Form.Control type="email" name="email" onChange={handleInputChange} placeholder="Enter email" />
+                            {emailError && <Form.Text className="text-danger">{emailError}</Form.Text>}
+                        </Form.Group>
 
-                <Dropdown.Menu className="bg-dark m-1 p-3 border-success" style={{ right: !hamburgerOpen ? 0 : 'auto', left: 'auto', width: "300px", position: 'absolute' }}>
-                    {showLogin ? (
-                        <div>
-                            <Form onSubmit={handleFormSubmit}>
-                                <Form.Group>
-                                    <Form.Label>Email address</Form.Label>
-                                    <Form.Control type="email" name="email" onChange={handleInputChange} placeholder="Enter email" />
-                                </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control type="password" name="password" onChange={handleInputChange} placeholder="Password" />
+                            {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
+                        </Form.Group>
+                    </div>
+                ) : (
+                    <div>
+                        <Form.Group>
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control type="text" name="userName" onChange={handleInputChange} placeholder="Enter name" />
+                            {nameError && <div style={{ color: 'red' }}>{nameError}</div>}
+                        </Form.Group>
 
-                                <Form.Group>
-                                    <Form.Label>Password</Form.Label>
-                                    <Form.Control type="password" name="password" onChange={handleInputChange} placeholder="Password" />
-                                </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Email address</Form.Label>
+                            <Form.Control type="email" name="email" onChange={handleInputChange} placeholder="Enter email" />
+                            {emailError && <Form.Text className="text-danger">{emailError}</Form.Text>}
+                        </Form.Group>
 
-                                <Button type="submit" className='mt-3' variant="success">Submit</Button>
+                        <Form.Group>
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control type="password" name="password" onChange={handleInputChange} placeholder="Password" />
+                            {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
+                        </Form.Group>
 
-                                <Form.Text as="button" onClick={toggleView} style={{ border: 'none', color: "white", backgroundColor: 'transparent', cursor: 'pointer' }}>
-                                    Don't have an account? Register
-                                </Form.Text>
-                            </Form>
-                        </div>
-                    ) : (
-                        <div>
-                            <Form onSubmit={handleFormSubmit}>
-                                <Form.Group>
-                                    <Form.Label>Name</Form.Label>
-                                    <Form.Control type="text" name="userName" onChange={handleInputChange} placeholder="Enter name" />
-                                </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Confirm Password</Form.Label>
+                            <Form.Control type="password" name="confirmPassword" onChange={handleInputChange} placeholder="Confirm Password" />
 
-                                <Form.Group>
-                                    <Form.Label>Email address</Form.Label>
-                                    <Form.Control type="email" name="email" onChange={handleInputChange} placeholder="Enter email" />
-                                </Form.Group>
-
-                                <Form.Group>
-                                    <Form.Label>Password</Form.Label>
-                                    <Form.Control type="password" name="password" onChange={handleInputChange} placeholder="Password" />
-                                </Form.Group>
-
-                                <Form.Group>
-                                    <Form.Label>Confirm Password</Form.Label>
-                                    <Form.Control type="password" name="confirmPassword" onChange={handleInputChange} placeholder="Confirm Password" />
-                                    {emailError && <div style={{ color: 'red' }}>{emailError}</div>}
-                                    {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
-                                    {nameError && <div style={{ color: 'red' }}>{nameError}</div>}
-                                </Form.Group>
-
-                                <Button type="submit" className='mt-3' variant="success">Submit</Button>
-
-                                <Form.Text as="button" onClick={toggleView} style={{ border: 'none', color: "white", backgroundColor: 'transparent', cursor: 'pointer' }}>
-                                    Already have an account? Login
-                                </Form.Text>
-                            </Form>
-                        </div>
-                    )}
-                </Dropdown.Menu>
-            </Dropdown>
+                            {error && <div style={{ color: 'red' }}>{error}</div>}
+                        </Form.Group>
+                    </div>
+                )}
+                <Button type="submit" className='mt-3' variant="success">Submit</Button>
+                <Form.Text as="button" onClick={toggleView} style={{ border: 'none', color: "white", backgroundColor: 'transparent', cursor: 'pointer' }}>
+                    {showLogin ? "Don't have an account? Register" : "Already have an account? Login"}
+                </Form.Text>
+            </Form>
         );
     }
 }
-
 export default LoginRegister;
