@@ -9,6 +9,7 @@ import Extras from './components/sections/Extras';
 import Contact from './components/sections/Contact';
 import NewBooking from './components/NewBooking';
 import OldBookings from './components/OldBookings';
+import UpdateBooking from './components/UpdateBooking';
 import { Element } from 'react-scroll';
 import UserContext from './components/UserContext';
 
@@ -44,7 +45,7 @@ function App() {
             } />
             <Route path="/new-booking" element={<NewBooking />} />
             <Route path="/old-bookings" element={<OldBookings />} />
-
+            <Route path="/bookings/update/:id" element={<UpdateBooking />} />
           </Routes>
         </div>
       </BrowserRouter>

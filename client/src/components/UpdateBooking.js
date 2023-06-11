@@ -1,67 +1,91 @@
-import React, { useContext } from 'react';
-import UserContext from '../UserContext';
+import React, { useContext, useEffect, useState } from 'react';
+import UserContext from './UserContext';
 import { Button, Dropdown, Image, Table, Form } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import axios from '../axiosInstance';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from './axiosInstance';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
-const StepConfirm = ({ prev, data, setData }) => {
+const UpdateBooking = () => {
+    const { id } = useParams();
     const navigate = useNavigate();
-    const { user } = useContext(UserContext);
-    let displayDate = new Date(data.date).toLocaleDateString();
+    const { user, userToken } = useContext(UserContext);
 
     const mapNames = ["apocalyptic", "castle", "cave", "city", "container", "indoor", "inflatable", "lake"];
     const weaponNames = ["dsr", "eclipse", "empire", "jt", "kingman", "nerf", "shocker", "tippmann"];
     const extraNames = ["alcohol", "cafe", "fast-food", "shop", "steak", "taxi"];
 
-    const handleExtraChange = (e) => {
-        let newExtras = [...data.extras];
+    const [bookingData, setBookingData] = useState({
+        map: '',
+        weapon: '',
+        extras: [],
+        date: new Date()
+    });
 
+    useEffect(() => {
+        if (!user) {
+            navigate('/');
+        }
+    }, [user, navigate]);
+
+    useEffect(() => {
+        const getBookings = async () => {
+            try {
+                console.log(`Fetching booking with ID: ${id}`);
+                const response = await axios.get(`/api/bookings/${id}`, {
+                    headers: { Authorization: `Bearer ${userToken}` },
+                });
+                console.log(response.data);
+                setBookingData(response.data);
+            } catch (error) {
+                console.log("Error getting bookings: ", error);
+            }
+
+        };
+
+        getBookings();
+    }, [id, userToken]);
+
+    const handleMapChange = (map) => {
+        setBookingData({ ...bookingData, map });
+    };
+
+    const handleWeaponChange = (weapon) => {
+        setBookingData({ ...bookingData, weapon });
+    };
+
+    const handleDateChange = (date) => {
+        setBookingData({ ...bookingData, date });
+    };
+
+    const handleExtraChange = (e) => {
+        let newExtras = [...bookingData.extras];
         if (e.target.checked) {
             newExtras.push(e.target.name);
         } else {
             newExtras = newExtras.filter(extra => extra !== e.target.name);
         }
+        setBookingData({ ...bookingData, extras: newExtras });
+    };
 
-        setData({ ...data, extras: newExtras });
-    }
-
-    const handleClickBook = async (event) => {
-        event.preventDefault();
-
+    const updateBooking = async () => {
         try {
-            const response = await axios.post('/api/bookings', {
-                userId: user._id,
-                map: data.map,
-                weapon: data.weapon,
-                extras: data.extras,
-                date: data.date,
+            await axios.put(`/api/bookings/${id}`, bookingData, {
+                headers: { Authorization: `Bearer ${userToken}` },
             });
-
-            if (!data.date) {
-                console.error('Date is not defined:', data.date);
-                return;
-            }
-
-            navigate("/")
+            navigate('/old-bookings');
         } catch (error) {
-            console.log("Booking request error: ", error);
+            console.error('Error updating booking:', error);
         }
-    }
-
-    const handleClickCancel = () => {
-        navigate('/');
-    }
+    };
 
     return (
         <div className='m-3'>
-            <h2 className='p-3'>Confirm Booking</h2>
-
+            <h2 className='p-3'>Update Booking</h2>
             <Table responsive variant="dark" className="vertical-line">
                 <thead>
                     <tr>
-
+                        <th></th>
                         <th>Map</th>
                         <th>Weapon</th>
                         <th>Extras</th>
@@ -70,22 +94,22 @@ const StepConfirm = ({ prev, data, setData }) => {
                 </thead>
                 <tbody>
                     <tr>
-
-                        <td>{data.map}</td>
-                        <td>{data.weapon}</td>
+                        <td>Your chosen</td>
+                        <td>{bookingData.map}</td>
+                        <td>{bookingData.weapon}</td>
                         <td>
-                            {data.extras.map((extra, index) => (
+                            {bookingData.extras.map((extra, index) => (
                                 <p key={index}>{extra}</p>
                             ))}
                         </td>
-                        <td>{displayDate}</td>
+                        <td>{new Date(bookingData.date).toLocaleString()}</td>
                     </tr>
                     <tr>
-
+                        <td>Change</td>
                         <td>
-                            <Dropdown onSelect={(val) => setData({ ...data, map: val })}>
+                            <Dropdown onSelect={handleMapChange}>
                                 <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                    {data.map || 'Select a map'}
+                                    {bookingData.map || 'Select a map'}
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
                                     {mapNames.map((mapName, index) => (
@@ -95,9 +119,9 @@ const StepConfirm = ({ prev, data, setData }) => {
                             </Dropdown>
                         </td>
                         <td>
-                            <Dropdown onSelect={(val) => setData({ ...data, weapon: val })}>
+                            <Dropdown onSelect={handleWeaponChange}>
                                 <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                    {data.weapon || 'Select a weapon'}
+                                    {bookingData.weapon || 'Select a weapon'}
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
                                     {weaponNames.map((weaponName, index) => (
@@ -114,7 +138,7 @@ const StepConfirm = ({ prev, data, setData }) => {
                                         id={`extra-${index}`}
                                         label={extraName.charAt(0).toUpperCase() + extraName.slice(1)}
                                         name={extraName}
-                                        checked={data.extras.includes(extraName)}
+                                        checked={bookingData.extras.includes(extraName)}
                                         onChange={handleExtraChange}
                                         key={index}
                                     />
@@ -122,15 +146,21 @@ const StepConfirm = ({ prev, data, setData }) => {
                             </Form>
                         </td>
                         <td>
-                            <DatePicker className='text-black' selected={data.date} onChange={(date) => setData({ ...data, date: date })} />
+                            <DatePicker className='text-black' selected={new Date(bookingData.date)} onChange={handleDateChange} />
                         </td>
                     </tr>
                     <tr>
                         <td>Image preview</td>
-                        <td><Image src={`/images/maps/m_${data.map}.jpg`} alt={data.map} width="100px" height="100px" /></td>
-                        <td><Image src={`/images/weapons/w_${data.weapon}.jpg`} alt={data.weapon} width="100px" height="100px" /></td>
                         <td>
-                            {data.extras.map((extra, index) => (
+                            {bookingData.map &&
+                                <Image src={`/images/maps/m_${bookingData.map}.jpg`} alt={bookingData.map} width="100px" height="100px" />}
+                        </td>
+                        <td>
+                            {bookingData.weapon &&
+                                <Image src={`/images/weapons/w_${bookingData.weapon}.jpg`} alt={bookingData.weapon} width="100px" height="100px" />}
+                        </td>
+                        <td>
+                            {bookingData.extras.map((extra, index) => (
                                 <Image key={index} src={`/images/extras/e_${extra}.jpg`} alt={extra} width="100px" height="100px" />
                             ))}
                         </td>
@@ -138,14 +168,9 @@ const StepConfirm = ({ prev, data, setData }) => {
                     </tr>
                 </tbody>
             </Table>
-            <div className="d-flex justify-content-around">
-                <Button className='m-3 ' onClick={prev}>Back</Button>
-                <Button className='m-3 bg-danger' onClick={handleClickCancel}>Cancel</Button>
-                <Button className='m-3 bg-success' onClick={handleClickBook}>Book</Button>
-            </div>
+            <Button variant="primary" onClick={updateBooking}>Update Booking</Button>
         </div>
     );
+};
 
-}
-
-export default StepConfirm;
+export default UpdateBooking;
