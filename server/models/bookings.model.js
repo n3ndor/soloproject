@@ -4,7 +4,6 @@ const BookingSchema = mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true,
     },
     map: {
         type: String,

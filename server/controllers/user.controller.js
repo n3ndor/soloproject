@@ -2,88 +2,56 @@ const User = require('../models/users.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const createTokenAndSend = (user, res) => {
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
-    const { password, ...userWithoutPassword } = user.toObject();
-    res.cookie("usertoken", token, { httpOnly: true }).json(userWithoutPassword);
+const generateToken = (user) => {
+    return jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 }
 
-
-
-const registerUser = (req, res, next) => {
-    console.log('Register endpoint hit');
-    console.log('Request body:', req.body);
-
+const registerUser = async (req, res, next) => {
     const { userName, email, password } = req.body;
 
-    User.findOne({ email })
-        .then(user => {
-            if (user) {
-                console.error('User already exists error:', { userName, email });
-                return res.status(400).json("Email already exist");
-            }
+    if (!userName || !email || !password || password.length < 6) {
+        return res.status(400).json({ error: 'Missing required field' });
+    }
 
-            const newUser = new User({ userName, email, password });
-            newUser.save()
-                .then(() => {
-                    createTokenAndSend(newUser, res);
-                })
-                .catch((error) => {
-                    console.error('Error in saving user:', error);
-                    next(error);
-                });
-        })
-        .catch(error => {
-            console.error('Error in finding user:', error);
-            next(error);
-        });
-};
-
-const loginUser = async (req, res, next) => {
-    console.log('Login endpoint hit');
-    console.log('Request body:', req.body);
-
-    const { email, password } = req.body;
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        return res.status(400).json({ error: "Email already exist" });
+    }
 
     try {
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            console.error('Invalid Email or Password error:', { email });
-            return res.status(400).send('Invalid Email or Password');
-        }
-
-        const validPassword = await bcrypt.compare(password, user.password);
-
-        if (!validPassword) {
-            console.error('Invalid Email or Password error:', { email });
-            return res.status(400).send('Invalid Email or Password');
-        }
-
-        createTokenAndSend(user, res);
+        const newUser = new User({ userName, email, password });
+        await newUser.save();
+        const token = generateToken(newUser);
+        res.json({ token, user: { _id: newUser._id, userName, email } });
     } catch (error) {
-        console.error('Error in login endpoint:', error);
         next(error);
     }
+}
+
+const loginUser = async (req, res, next) => {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+        return res.status(400).send('Invalid Email or Password');
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+        return res.status(400).send('Invalid Email or Password');
+    }
+
+    const token = generateToken(user);
+    res.json({ token, user: { _id: user._id, userName: user.userName, email } });
 }
 
 const getUser = async (req, res, next) => {
     try {
-        const user = await User.findById(req.user.id);
-
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-
-        res.send(user);
+        const user = await User.findById(req.user._id).select('-password');
+        res.json(user);
     } catch (error) {
         next(error);
     }
 }
 
-const logOut = (req, res) => {
-    res.clearCookie("usertoken");
-    res.sendStatus(200);
-}
-
-module.exports = { registerUser, loginUser, getUser, logOut };
+module.exports = { registerUser, loginUser, getUser };

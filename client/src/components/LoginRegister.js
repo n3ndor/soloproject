@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Form, Button, Nav } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import UserContext from './UserContext';
+import axios from './axiosInstance';
 
-const LoginRegister = ({ open, setOpen, user, setUser }) => {
+const LoginRegister = ({ open, setOpen, user }) => {
     const [showLogin, setShowLogin] = useState(true);
     const [formData, setFormData] = useState({});
     const [passwordError, setPasswordError] = useState(null);
     const [emailError, setEmailError] = useState(null);
     const [nameError, setNameError] = useState(null);
     const [error, setError] = useState(null);
+    const [confirmPasswordError, setConfirmPasswordError] = useState(null);
     const navigate = useNavigate();
+    const { setUser } = useContext(UserContext);
+
+    const [hasSubmitted, setHasSubmitted] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -21,6 +26,8 @@ const LoginRegister = ({ open, setOpen, user, setUser }) => {
 
     const toggleView = () => {
         setShowLogin(!showLogin);
+        setHasSubmitted(false);
+        setFormData({});
     }
 
     const handleInputChange = (event) => {
@@ -37,40 +44,33 @@ const LoginRegister = ({ open, setOpen, user, setUser }) => {
     };
 
     const validateFormData = () => {
+        let errors = {};
+
         if (!formData.email) {
-            setEmailError('Email is required');
-            return false;
+            errors.email = 'Email is required';
         }
 
         if (!formData.password) {
-            setPasswordError('Password is required');
-            return false;
-        } else if (!showLogin && formData.password !== formData.confirmPassword) {
-            setPasswordError('Passwords do not match');
-            return false;
+            errors.password = 'Password is required';
+        } else if (formData.password.length < 6) {
+            errors.password = 'Password must have at least 6 characters';
         }
 
         if (!showLogin && !formData.userName) {
-            setNameError('Name is required');
-            return false;
+            errors.name = 'Name is required';
         }
 
-        return true;
+        if (!showLogin && (!formData.confirmPassword || formData.password !== formData.confirmPassword)) {
+            errors.confirmPassword = 'Passwords do not match';
+        }
+
+        setEmailError(errors.email || null);
+        setPasswordError(errors.password || null);
+        setConfirmPasswordError(errors.confirmPassword || null); // make sure to define setConfirmPasswordError and confirmPasswordError
+        setNameError(errors.name || null);
+
+        return errors;
     }
-
-    const submitForm = async (endpoint) => {
-        try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}${endpoint}`, formData);
-            localStorage.setItem("usertoken", response.data.token);
-            setUser(response.data);
-            setError(null);
-            setOpen(false);
-        } catch (error) {
-            if (error.response) {
-                setError('An error occurred: ' + error.response.data);
-            }
-        }
-    };
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
@@ -78,14 +78,48 @@ const LoginRegister = ({ open, setOpen, user, setUser }) => {
         setEmailError(null);
         setPasswordError(null);
         setNameError(null);
-
-        if (!validateFormData()) {
-            return;
-        }
+        setConfirmPasswordError(null);
+        setHasSubmitted(true);
 
         const endpoint = showLogin ? "/api/login" : "/api/register";
-        submitForm(endpoint);
-    }
+
+        const errors = validateFormData(); // Initialize errors before using it
+
+        if (Object.keys(errors).length === 0) {
+            submitForm(endpoint);
+        }
+    };
+
+    const submitForm = async (endpoint) => {
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}${endpoint}`, formData);
+            console.log("Response data: ", response.data);
+
+            if (response.data && response.data.token) {
+                localStorage.setItem("usertoken", response.data.token);
+                console.log('Token after login:', localStorage.getItem('usertoken'));
+                setUser(response.data);
+            }
+            else { console.log("Nothing to submit"); }
+
+            setUser(response.data);
+            setError(null);
+            setOpen(false);
+        } catch (error) {
+            if (error.response && error.response.data) {
+                const errors = error.response.data;
+                let errorMessages;
+                if (typeof errors === 'object' && Object.keys(errors).length > 1) {
+                    errorMessages = Object.values(errors).join(', ');
+                } else {
+                    errorMessages = errors[Object.keys(errors)[0]];
+                }
+                setError('An error occurred: ' + errorMessages);
+            } else {
+                setError('An unknown error occurred. Please try again.');
+            }
+        }
+    };
 
     if (user) {
         return (
@@ -103,45 +137,44 @@ const LoginRegister = ({ open, setOpen, user, setUser }) => {
                         <Form.Group>
                             <Form.Label>Email address</Form.Label>
                             <Form.Control type="email" name="email" onChange={handleInputChange} placeholder="Enter email" />
-                            {emailError && <Form.Text className="text-danger">{emailError}</Form.Text>}
+                            {hasSubmitted && !formData.email && emailError && <Form.Text className="text-danger">{emailError}</Form.Text>}
                         </Form.Group>
 
                         <Form.Group>
                             <Form.Label>Password</Form.Label>
                             <Form.Control type="password" name="password" onChange={handleInputChange} placeholder="Password" />
-                            {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
+                            {hasSubmitted && !formData.password && passwordError && <Form.Text className="text-danger">{passwordError}</Form.Text>}
                         </Form.Group>
                     </div>
                 ) : (
                     <div>
                         <Form.Group>
                             <Form.Label>Name</Form.Label>
-                            <Form.Control type="text" name="userName" onChange={handleInputChange} placeholder="Enter name" />
-                            {nameError && <div style={{ color: 'red' }}>{nameError}</div>}
+                            <Form.Control type="text" name="userName" onChange={handleInputChange} placeholder="Enter name" isInvalid={!!nameError} />
+                            {hasSubmitted && !formData.userName && nameError && <Form.Text className="text-danger">{nameError}</Form.Text>}
                         </Form.Group>
 
                         <Form.Group>
                             <Form.Label>Email address</Form.Label>
-                            <Form.Control type="email" name="email" onChange={handleInputChange} placeholder="Enter email" />
-                            {emailError && <Form.Text className="text-danger">{emailError}</Form.Text>}
+                            <Form.Control type="email" name="email" onChange={handleInputChange} placeholder="Enter email" isInvalid={!!emailError} />
+                            {hasSubmitted && !formData.email && emailError && <Form.Text className="text-danger">{emailError}</Form.Text>}
                         </Form.Group>
 
                         <Form.Group>
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" name="password" onChange={handleInputChange} placeholder="Password" />
-                            {passwordError && <div style={{ color: 'red' }}>{passwordError}</div>}
+                            <Form.Control type="password" name="password" onChange={handleInputChange} placeholder="Password" isInvalid={!!passwordError} />
+                            {hasSubmitted && (!formData.password || formData.password.length < 6) && passwordError && <Form.Text className="text-danger">{passwordError}</Form.Text>}
                         </Form.Group>
 
-                        <Form.Group>
+                        <Form.Group controlId="formBasicPassword2">
                             <Form.Label>Confirm Password</Form.Label>
-                            <Form.Control type="password" name="confirmPassword" onChange={handleInputChange} placeholder="Confirm Password" />
-
-                            {error && <div style={{ color: 'red' }}>{error}</div>}
+                            <Form.Control type="password" name="confirmPassword" onChange={handleInputChange} placeholder="Confirm Password" isInvalid={!!confirmPasswordError} />
+                            <Form.Control.Feedback type='invalid'>{confirmPasswordError}</Form.Control.Feedback>
                         </Form.Group>
                     </div>
                 )}
                 <Button type="submit" className='mt-3' variant="success">Submit</Button>
-                <Form.Text as="button" onClick={toggleView} style={{ border: 'none', color: "white", backgroundColor: 'transparent', cursor: 'pointer' }}>
+                <Form.Text as="button" type="button" onClick={toggleView} style={{ border: 'none', color: "white", backgroundColor: 'transparent', cursor: 'pointer' }}>
                     {showLogin ? "Don't have an account? Register" : "Already have an account? Login"}
                 </Form.Text>
             </Form>

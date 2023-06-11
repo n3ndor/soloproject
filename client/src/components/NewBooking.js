@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Stepper from 'react-stepper-horizontal';
 import StepMap from './steps/StepMap';
 import StepWeapon from './steps/StepWeapon';
 import StepExtras from './steps/StepExtras';
 import StepDate from './steps/StepDate';
 import StepConfirm from './steps/StepConfirm';
+import UserContext from './UserContext';
 
 const NewBooking = () => {
+    const { user } = useContext(UserContext);
     const [currentStep, setCurrentStep] = useState(0);
     const [bookingData, setBookingData] = useState({
         map: '',
@@ -14,6 +17,13 @@ const NewBooking = () => {
         extras: [],
         date: ''
     });
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!user) {
+            navigate('/');
+        }
+    }, [user, navigate]);
 
     const steps = [
         { title: 'Choose Map', imagePath: '/images/maps/m_apocalyptic.jpg' },
@@ -23,21 +33,27 @@ const NewBooking = () => {
         { title: 'Confirm Booking', imagePath: '/images/confirm-image-path.jpg' }
     ];
 
-    const nextStep = () => setCurrentStep(currentStep + 1);
+    const nextStep = () => {
+        console.log("Current data before next step: ", bookingData);
+        setCurrentStep(currentStep + 1);
+    };
     const prevStep = () => setCurrentStep(currentStep - 1);
 
-    const stepComponents = [
-        <StepMap next={nextStep} setData={setBookingData} data={bookingData} imagePath={steps[0].imagePath} />,
-        <StepWeapon next={nextStep} setData={setBookingData} data={bookingData} imagePath={steps[1].imagePath} />,
-        <StepExtras next={nextStep} setData={setBookingData} data={bookingData} imagePath={steps[2].imagePath} />,
-        <StepDate next={nextStep} setData={setBookingData} data={bookingData} imagePath={steps[3].imagePath} />,
-        <StepConfirm prev={prevStep} setData={setBookingData} data={bookingData} imagePath={steps[4].imagePath} />
-    ];
+    const StepComponent = [StepMap, StepWeapon, StepExtras, StepDate, StepConfirm][currentStep];
 
     return (
         <div>
             <Stepper steps={steps} activeStep={currentStep} />
-            <div>{stepComponents[currentStep]}</div>
+            <div>
+                <StepComponent
+                    next={nextStep}
+                    prev={prevStep}
+                    setData={setBookingData}
+                    data={bookingData}
+                    imagePath={steps[currentStep].imagePath}
+                    user={user}
+                />
+            </div>
         </div>
     );
 };

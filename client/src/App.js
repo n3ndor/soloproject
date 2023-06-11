@@ -8,15 +8,17 @@ import Weapons from './components/sections/Weapons';
 import Extras from './components/sections/Extras';
 import Contact from './components/sections/Contact';
 import NewBooking from './components/NewBooking';
+import OldBookings from './components/OldBookings';
 import { Element } from 'react-scroll';
-import UserContext from './UserContext';
+import UserContext from './components/UserContext';
 
 function App() {
 
   const [user, setUser] = useState(null);
+  const [userToken, setUserToken] = useState(null);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, userToken, setUserToken }}>
       <BrowserRouter>
         <div className="App bg">
           <NavBar />
@@ -41,6 +43,8 @@ function App() {
               </>
             } />
             <Route path="/new-booking" element={<NewBooking />} />
+            <Route path="/old-bookings" element={<OldBookings />} />
+
           </Routes>
         </div>
       </BrowserRouter>

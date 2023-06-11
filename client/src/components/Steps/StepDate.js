@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Button } from 'react-bootstrap';
@@ -10,6 +10,10 @@ const StepDate = ({ next, setData, data }) => {
         setData(prevData => ({ ...prevData, date: startDate }));
         next();
     }
+
+    useEffect(() => {
+        console.log("startDate:", startDate);
+    }, [startDate]);
 
     return (
         <div className='m-3'>

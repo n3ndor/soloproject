@@ -28,6 +28,6 @@ UserSchema.pre('save', async function (next) {
     next();
 });
 
-UserSchema.plugin(uniqueValidator, { message: 'Email must be unique.' });
+UserSchema.plugin(uniqueValidator, { message: 'This email is already registered. Please try another.' });
 
 module.exports = mongoose.model("User", UserSchema);

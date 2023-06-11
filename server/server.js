@@ -3,7 +3,9 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const userRoutes = require('./routes/users.routes');
+const userController = require('./controllers/user.controller');
 const bookingRoutes = require('./routes/bookings.routes');
+const verifyToken = require("./controllers/auth.middleware");
 
 require('./config/mongoose.config');
 
@@ -12,6 +14,7 @@ app.use(express.json());
 userRoutes(app);
 bookingRoutes(app);
 
+app.get("/user", verifyToken, userController.getUser)
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });

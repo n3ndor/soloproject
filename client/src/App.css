@@ -1,5 +1,5 @@
 * {
-    color: white;
+    color: #ffffff;
 }
 
 .App {
@@ -52,7 +52,6 @@
         left: auto;
     }
 }
-
 
 @media (max-width: 600px) {
     .custom-dropdown {
