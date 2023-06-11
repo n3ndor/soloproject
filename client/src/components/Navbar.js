@@ -16,7 +16,9 @@ const NavBar = () => {
         <div>
             <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" fixed="top" className="p-3">
                 <Navbar.Brand>
-                    <RouterLink to="/" style={{ cursor: "pointer", textDecoration: 'none', color: '#fff' }}><span>Galactical Paintball</span></RouterLink>
+                    <RouterLink to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ cursor: "pointer", textDecoration: 'none', color: '#fff' }}>
+                        <span>Galactical Paintball</span>
+                    </RouterLink>
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setOpen(!open)} />
                 <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-between">

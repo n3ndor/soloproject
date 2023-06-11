@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Image, Row, Col, Button } from 'react-bootstrap';
 
-const StepExtras = ({ next, setData, data }) => {
+const StepExtras = ({ next, prev, setData, data }) => {
     const extraNames = ["cafe", "alcohol", "steak", "fast-food", "shop", "taxi"];
     const [selectedExtras, setSelectedExtras] = useState([]);
 
@@ -40,7 +40,10 @@ const StepExtras = ({ next, setData, data }) => {
                     </Col>
                 ))}
             </Row>
-            <Button variant="success" onClick={handleNext}>Next</Button>
+            <div className="d-flex justify-content-around">
+                <Button className='bg-success' onClick={prev}>Back</Button>
+                <Button className='bg-success' onClick={handleNext}>Next</Button>
+            </div>
         </div>
     );
 }

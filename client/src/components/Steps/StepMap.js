@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Image, Row, Col } from 'react-bootstrap';
 
 const StepMap = ({ next, setData, data }) => {
     const mapNames = ["apocalyptic", "castle", "cave", "city", "container", "indoor", "inflatable", "lake"];
+    const [selectedMap, setSelectedMap] = useState(null);
 
     const handleClick = (mapName) => {
+        setSelectedMap(mapName);
         setData(prevData => ({ ...prevData, map: mapName }));
-        next();
+    }
+
+    const handleNext = () => {
+        if (selectedMap) {
+            next();
+        } else {
+            alert("Please select a map before proceeding.");
+        }
     }
 
     return (
@@ -21,6 +30,7 @@ const StepMap = ({ next, setData, data }) => {
                                 src={`/images/maps/m_${mapName}.jpg`}
                                 alt={mapName}
                                 thumbnail
+                                style={selectedMap === mapName ? { border: '3px solid green', boxShadow: "0px 0px 10px 5px yellow" } : {}}
                             />
                             <div style={{ textAlign: 'center', marginTop: '10px' }}>
                                 {mapName.charAt(0).toUpperCase() + mapName.slice(1)}
@@ -29,6 +39,9 @@ const StepMap = ({ next, setData, data }) => {
                     </Col>
                 ))}
             </Row>
+            <div className="d-flex justify-content-end">
+                <Button className='bg-success ' onClick={handleNext}>Next</Button>
+            </div>
         </div>
     );
 }

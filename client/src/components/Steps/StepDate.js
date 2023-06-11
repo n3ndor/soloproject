@@ -3,10 +3,10 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Button } from 'react-bootstrap';
 
-const StepDate = ({ next, setData, data }) => {
+const StepDate = ({ next, prev, setData, data }) => {
     const [startDate, setStartDate] = React.useState(new Date());
 
-    const handleClick = () => {
+    const handleNext = () => {
         setData(prevData => ({ ...prevData, date: startDate }));
         next();
     }
@@ -18,8 +18,13 @@ const StepDate = ({ next, setData, data }) => {
     return (
         <div className='m-3'>
             <h2 className='p-3'>Choose Date</h2>
+            <p>Our Team awaits you 365 days a year and 24 hours a day</p>
+            <p>Just pick a day and we organize your day full of fun</p>
             <DatePicker className='text-black' selected={startDate} onChange={(date) => setStartDate(date)} />
-            <Button className='m-1 bg-success' onClick={handleClick}>Next</Button>
+            <div className="d-flex justify-content-around">
+                <Button className='bg-success' onClick={prev}>Back</Button>
+                <Button className='bg-success' onClick={handleNext}>Next</Button>
+            </div>
         </div>
     );
 }

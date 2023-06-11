@@ -49,7 +49,7 @@ const OldBookings = () => {
                 <tbody>
                     {bookings.map((booking, index) => (
                         <tr key={index}>
-                            <td></td>
+                            <td>{index + 1}</td>
                             <td>{booking.map}</td>
                             <td>{booking.weapon}</td>
                             <td>{booking.extras.join(", ")}</td>

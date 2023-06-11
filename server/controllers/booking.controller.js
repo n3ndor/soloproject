@@ -21,7 +21,7 @@ const getBookingsByUser = async (req, res, next) => {
     const userId = req.user._id;
 
     try {
-        const bookings = await Booking.find({ userId }).sort('-date'); // sort by date in descending order
+        const bookings = await Booking.find({ userId });
         res.status(200).json(bookings);
     } catch (error) {
         next(error);

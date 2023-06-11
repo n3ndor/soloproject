@@ -24,6 +24,12 @@
 
 .nav-item {
     margin-right: 15px;
+    cursor: pointer;
+
+    :hover {
+        color: yellow;
+        font-size: large;
+    }
 }
 
 .element {
@@ -45,6 +51,10 @@
     margin: 2% 5%;
 }
 
+.vertical-line td,
+.vertical-line th {
+    border-right: 1px solid #dee2e6;
+}
 
 @media (min-width: 601px) {
     .custom-dropdown {
