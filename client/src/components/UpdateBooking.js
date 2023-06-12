@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import UserContext from './UserContext';
-import { Button, Dropdown, Image, Table, Form } from 'react-bootstrap';
+import { Button, Image, Table, Form } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from './axiosInstance';
 import DatePicker from 'react-datepicker';
@@ -31,11 +31,9 @@ const UpdateBooking = () => {
     useEffect(() => {
         const getBookings = async () => {
             try {
-                console.log(`Fetching booking with ID: ${id}`);
                 const response = await axios.get(`/api/bookings/${id}`, {
                     headers: { Authorization: `Bearer ${userToken}` },
                 });
-                console.log(response.data);
                 setBookingData(response.data);
             } catch (error) {
                 console.log("Error getting bookings: ", error);
@@ -45,18 +43,6 @@ const UpdateBooking = () => {
 
         getBookings();
     }, [id, userToken]);
-
-    const handleMapChange = (map) => {
-        setBookingData({ ...bookingData, map });
-    };
-
-    const handleWeaponChange = (weapon) => {
-        setBookingData({ ...bookingData, weapon });
-    };
-
-    const handleDateChange = (date) => {
-        setBookingData({ ...bookingData, date });
-    };
 
     const handleExtraChange = (e) => {
         let newExtras = [...bookingData.extras];
@@ -85,7 +71,6 @@ const UpdateBooking = () => {
             <Table responsive variant="dark" className="vertical-line">
                 <thead>
                     <tr>
-                        <th></th>
                         <th>Map</th>
                         <th>Weapon</th>
                         <th>Extras</th>
@@ -94,41 +79,39 @@ const UpdateBooking = () => {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Your chosen</td>
-                        <td>{bookingData.map}</td>
-                        <td>{bookingData.weapon}</td>
                         <td>
-                            {bookingData.extras.map((extra, index) => (
-                                <p key={index}>{extra}</p>
-                            ))}
-                        </td>
-                        <td>{new Date(bookingData.date).toLocaleString()}</td>
-                    </tr>
-                    <tr>
-                        <td>Change</td>
-                        <td>
-                            <Dropdown onSelect={handleMapChange}>
-                                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                    {bookingData.map || 'Select a map'}
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                    {mapNames.map((mapName, index) => (
-                                        <Dropdown.Item eventKey={mapName} key={index}>{mapName.charAt(0).toUpperCase() + mapName.slice(1)}</Dropdown.Item>
-                                    ))}
-                                </Dropdown.Menu>
-                            </Dropdown>
+                            <Form>
+                                {mapNames.map((mapName, index) => (
+                                    <Form.Check
+                                        type="radio"
+                                        id={`map-${index}`}
+                                        label={mapName.charAt(0).toUpperCase() + mapName.slice(1)}
+                                        name='map'
+                                        value={mapName}
+                                        checked={bookingData.map === mapName}
+                                        onChange={(e) => setBookingData({ ...bookingData, map: e.target.value })}
+                                        key={index}
+                                    />
+                                ))}
+                            </Form>
+                            <Image src={`/images/maps/m_${bookingData.map}.jpg`} alt={bookingData.map} width="100px" height="100px" />
                         </td>
                         <td>
-                            <Dropdown onSelect={handleWeaponChange}>
-                                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                    {bookingData.weapon || 'Select a weapon'}
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                    {weaponNames.map((weaponName, index) => (
-                                        <Dropdown.Item eventKey={weaponName} key={index}>{weaponName.charAt(0).toUpperCase() + weaponName.slice(1)}</Dropdown.Item>
-                                    ))}
-                                </Dropdown.Menu>
-                            </Dropdown>
+                            <Form>
+                                {weaponNames.map((weaponName, index) => (
+                                    <Form.Check
+                                        type="radio"
+                                        id={`weapon-${index}`}
+                                        label={weaponName.charAt(0).toUpperCase() + weaponName.slice(1)}
+                                        name='weapon'
+                                        value={weaponName}
+                                        checked={bookingData.weapon === weaponName}
+                                        onChange={(e) => setBookingData({ ...bookingData, weapon: e.target.value })}
+                                        key={index}
+                                    />
+                                ))}
+                            </Form>
+                            <Image src={`/images/weapons/w_${bookingData.weapon}.jpg`} alt={bookingData.weapon} width="100px" height="100px" />
                         </td>
                         <td>
                             <Form>
@@ -144,31 +127,27 @@ const UpdateBooking = () => {
                                     />
                                 ))}
                             </Form>
+                            <div>
+                                {bookingData.extras.map((extra, index) => (
+                                    <Image key={index} className='m-1' src={`/images/extras/e_${extra}.jpg`} alt={extra} width="30%" />
+                                ))}
+                            </div>
                         </td>
                         <td>
-                            <DatePicker className='text-black' selected={new Date(bookingData.date)} onChange={handleDateChange} />
+                            <DatePicker
+                                inline
+                                className='text-black'
+                                selected={new Date(bookingData.date)}
+                                onChange={(date) => setBookingData({ ...bookingData, date: date })}
+                            />
                         </td>
-                    </tr>
-                    <tr>
-                        <td>Image preview</td>
-                        <td>
-                            {bookingData.map &&
-                                <Image src={`/images/maps/m_${bookingData.map}.jpg`} alt={bookingData.map} width="100px" height="100px" />}
-                        </td>
-                        <td>
-                            {bookingData.weapon &&
-                                <Image src={`/images/weapons/w_${bookingData.weapon}.jpg`} alt={bookingData.weapon} width="100px" height="100px" />}
-                        </td>
-                        <td>
-                            {bookingData.extras.map((extra, index) => (
-                                <Image key={index} src={`/images/extras/e_${extra}.jpg`} alt={extra} width="100px" height="100px" />
-                            ))}
-                        </td>
-                        <td></td>
                     </tr>
                 </tbody>
             </Table>
-            <Button variant="primary" onClick={updateBooking}>Update Booking</Button>
+
+            <div className="d-flex justify-content-center">
+                <Button className='m-3 bg-success right' onClick={updateBooking}>Save and Go Back</Button>
+            </div>
         </div>
     );
 };

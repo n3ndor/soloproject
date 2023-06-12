@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import UserContext from './UserContext';
 import axios from './axiosInstance';
 
-const LoginRegister = ({ open, setOpen, user }) => {
+const LoginRegister = ({ setOpen, user }) => {
     const [showLogin, setShowLogin] = useState(true);
     const [formData, setFormData] = useState({});
     const [passwordError, setPasswordError] = useState(null);
@@ -43,6 +43,12 @@ const LoginRegister = ({ open, setOpen, user }) => {
         navigate("/");
     };
 
+    useEffect(() => {
+        if (hasSubmitted) {
+            validateFormData();
+        }
+    }, [formData, hasSubmitted]);
+
     const validateFormData = () => {
         let errors = {};
 
@@ -50,10 +56,12 @@ const LoginRegister = ({ open, setOpen, user }) => {
             errors.email = 'Email is required';
         }
 
+        if (!formData.password || formData.password.length < 6) {
+            errors.password = 'Password must have at least 6 characters';
+        }
+
         if (!formData.password) {
             errors.password = 'Password is required';
-        } else if (formData.password.length < 6) {
-            errors.password = 'Password must have at least 6 characters';
         }
 
         if (!showLogin && !formData.userName) {
@@ -66,7 +74,7 @@ const LoginRegister = ({ open, setOpen, user }) => {
 
         setEmailError(errors.email || null);
         setPasswordError(errors.password || null);
-        setConfirmPasswordError(errors.confirmPassword || null); // make sure to define setConfirmPasswordError and confirmPasswordError
+        setConfirmPasswordError(errors.confirmPassword || null);
         setNameError(errors.name || null);
 
         return errors;
@@ -75,15 +83,16 @@ const LoginRegister = ({ open, setOpen, user }) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
+        setHasSubmitted(true);
+
         setEmailError(null);
         setPasswordError(null);
         setNameError(null);
         setConfirmPasswordError(null);
-        setHasSubmitted(true);
 
         const endpoint = showLogin ? "/api/login" : "/api/register";
 
-        const errors = validateFormData(); // Initialize errors before using it
+        const errors = validateFormData()
 
         if (Object.keys(errors).length === 0) {
             submitForm(endpoint);
@@ -93,28 +102,31 @@ const LoginRegister = ({ open, setOpen, user }) => {
     const submitForm = async (endpoint) => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}${endpoint}`, formData);
-            console.log("Response data: ", response.data);
 
             if (response.data && response.data.token) {
                 localStorage.setItem("usertoken", response.data.token);
-                console.log('Token after login:', localStorage.getItem('usertoken'));
                 setUser(response.data);
+            } else {
+                throw new Error('No token received');
             }
-            else { console.log("Nothing to submit"); }
 
             setUser(response.data);
             setError(null);
             setOpen(false);
         } catch (error) {
-            if (error.response && error.response.data) {
-                const errors = error.response.data;
-                let errorMessages;
-                if (typeof errors === 'object' && Object.keys(errors).length > 1) {
-                    errorMessages = Object.values(errors).join(', ');
-                } else {
-                    errorMessages = errors[Object.keys(errors)[0]];
+            if (error.response) {
+                if (error.response.status === 400) {
+                    setError(error.response.data.error);
+                } else if (error.response.data) {
+                    const errors = error.response.data;
+                    let errorMessages;
+                    if (typeof errors === 'object' && Object.keys(errors).length > 1) {
+                        errorMessages = Object.values(errors).join(', ');
+                    } else {
+                        errorMessages = errors[Object.keys(errors)[0]];
+                    }
+                    setError('An error occurred: ' + errorMessages);
                 }
-                setError('An error occurred: ' + errorMessages);
             } else {
                 setError('An unknown error occurred. Please try again.');
             }
@@ -132,6 +144,7 @@ const LoginRegister = ({ open, setOpen, user }) => {
     } else {
         return (
             <Form onSubmit={handleFormSubmit}>
+
                 {showLogin ? (
                     <div>
                         <Form.Group>
@@ -162,8 +175,8 @@ const LoginRegister = ({ open, setOpen, user }) => {
 
                         <Form.Group>
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" name="password" onChange={handleInputChange} placeholder="Password" isInvalid={!!passwordError} />
-                            {hasSubmitted && (!formData.password || formData.password.length < 6) && passwordError && <Form.Text className="text-danger">{passwordError}</Form.Text>}
+                            <Form.Control type="password" name="password" onChange={handleInputChange} placeholder="Password" />
+                            {hasSubmitted && passwordError && <Form.Text className="text-danger">{passwordError}</Form.Text>}
                         </Form.Group>
 
                         <Form.Group controlId="formBasicPassword2">
@@ -173,6 +186,8 @@ const LoginRegister = ({ open, setOpen, user }) => {
                         </Form.Group>
                     </div>
                 )}
+                {error && <Form.Text className="text-danger">{error}<br /></Form.Text>}
+
                 <Button type="submit" className='mt-3' variant="success">Submit</Button>
                 <Form.Text as="button" type="button" onClick={toggleView} style={{ border: 'none', color: "white", backgroundColor: 'transparent', cursor: 'pointer' }}>
                     {showLogin ? "Don't have an account? Register" : "Already have an account? Login"}

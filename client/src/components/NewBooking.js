@@ -34,7 +34,6 @@ const NewBooking = () => {
     ];
 
     const nextStep = () => {
-        console.log("Current data before next step: ", bookingData);
         setCurrentStep(currentStep + 1);
     };
     const prevStep = () => setCurrentStep(currentStep - 1);

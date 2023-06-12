@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import UserContext from '../UserContext';
-import { Button, Dropdown, Image, Table, Form } from 'react-bootstrap';
+import { Button, Image, Table, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from '../axiosInstance';
 import DatePicker from 'react-datepicker';
@@ -9,7 +9,6 @@ import "react-datepicker/dist/react-datepicker.css";
 const StepConfirm = ({ prev, data, setData }) => {
     const navigate = useNavigate();
     const { user } = useContext(UserContext);
-    let displayDate = new Date(data.date).toLocaleDateString();
 
     const mapNames = ["apocalyptic", "castle", "cave", "city", "container", "indoor", "inflatable", "lake"];
     const weaponNames = ["dsr", "eclipse", "empire", "jt", "kingman", "nerf", "shocker", "tippmann"];
@@ -31,7 +30,7 @@ const StepConfirm = ({ prev, data, setData }) => {
         event.preventDefault();
 
         try {
-            const response = await axios.post('/api/bookings', {
+            await axios.post('/api/bookings', {
                 userId: user._id,
                 map: data.map,
                 weapon: data.weapon,
@@ -61,52 +60,49 @@ const StepConfirm = ({ prev, data, setData }) => {
             <Table responsive variant="dark" className="vertical-line">
                 <thead>
                     <tr>
-
                         <th>Map</th>
                         <th>Weapon</th>
                         <th>Extras</th>
-                        <th>Your date</th>
+                        <th>Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-
-                        <td>{data.map}</td>
-                        <td>{data.weapon}</td>
-                        <td>
-                            {data.extras.map((extra, index) => (
-                                <p key={index}>{extra}</p>
-                            ))}
+                        <td >
+                            <Form>
+                                {mapNames.map((mapName, index) => (
+                                    <Form.Check
+                                        type="radio"
+                                        id={`map-${index}`}
+                                        label={mapName.charAt(0).toUpperCase() + mapName.slice(1)}
+                                        name='map'
+                                        value={mapName}
+                                        checked={data.map === mapName}
+                                        onChange={(e) => setData({ ...data, map: e.target.value })}
+                                        key={index}
+                                    />
+                                ))}
+                            </Form>
+                            <Image src={`/images/maps/m_${data.map}.jpg`} alt={data.map} width="100px" height="100px" />
                         </td>
-                        <td>{displayDate}</td>
-                    </tr>
-                    <tr>
-
-                        <td>
-                            <Dropdown onSelect={(val) => setData({ ...data, map: val })}>
-                                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                    {data.map || 'Select a map'}
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                    {mapNames.map((mapName, index) => (
-                                        <Dropdown.Item eventKey={mapName} key={index}>{mapName.charAt(0).toUpperCase() + mapName.slice(1)}</Dropdown.Item>
-                                    ))}
-                                </Dropdown.Menu>
-                            </Dropdown>
+                        <td >
+                            <Form>
+                                {weaponNames.map((weaponName, index) => (
+                                    <Form.Check
+                                        type="radio"
+                                        id={`weapon-${index}`}
+                                        label={weaponName.charAt(0).toUpperCase() + weaponName.slice(1)}
+                                        name='weapon'
+                                        value={weaponName}
+                                        checked={data.weapon === weaponName}
+                                        onChange={(e) => setData({ ...data, weapon: e.target.value })}
+                                        key={index}
+                                    />
+                                ))}
+                            </Form>
+                            <Image src={`/images/weapons/w_${data.weapon}.jpg`} alt={data.weapon} width="100px" height="100px" />
                         </td>
-                        <td>
-                            <Dropdown onSelect={(val) => setData({ ...data, weapon: val })}>
-                                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                                    {data.weapon || 'Select a weapon'}
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                    {weaponNames.map((weaponName, index) => (
-                                        <Dropdown.Item eventKey={weaponName} key={index}>{weaponName.charAt(0).toUpperCase() + weaponName.slice(1)}</Dropdown.Item>
-                                    ))}
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </td>
-                        <td>
+                        <td >
                             <Form>
                                 {extraNames.map((extraName, index) => (
                                     <Form.Check
@@ -120,21 +116,20 @@ const StepConfirm = ({ prev, data, setData }) => {
                                     />
                                 ))}
                             </Form>
+                            <div>
+                                {data.extras.map((extra, index) => (
+                                    <Image key={index} className='m-1' src={`/images/extras/e_${extra}.jpg`} alt={extra} width="30%" />
+                                ))}
+                            </div>
                         </td>
-                        <td>
-                            <DatePicker className='text-black' selected={data.date} onChange={(date) => setData({ ...data, date: date })} />
+                        <td >
+                            <DatePicker
+                                inline
+                                className='text-black'
+                                selected={data.date}
+                                onChange={(date) => setData({ ...data, date: date })}
+                            />
                         </td>
-                    </tr>
-                    <tr>
-                        <td>Image preview</td>
-                        <td><Image src={`/images/maps/m_${data.map}.jpg`} alt={data.map} width="100px" height="100px" /></td>
-                        <td><Image src={`/images/weapons/w_${data.weapon}.jpg`} alt={data.weapon} width="100px" height="100px" /></td>
-                        <td>
-                            {data.extras.map((extra, index) => (
-                                <Image key={index} src={`/images/extras/e_${extra}.jpg`} alt={extra} width="100px" height="100px" />
-                            ))}
-                        </td>
-                        <td></td>
                     </tr>
                 </tbody>
             </Table>
