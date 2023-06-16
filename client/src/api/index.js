@@ -5,12 +5,9 @@ export const createBooking = async (data) => {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            // pass your token here
             'auth-token': localStorage.getItem('usertoken'),
         },
         body: JSON.stringify(data)
     });
     return response.json();
 };
-
-// Similarly, you can create other methods like getBookings, updateBooking, deleteBooking

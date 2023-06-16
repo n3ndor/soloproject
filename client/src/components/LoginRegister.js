@@ -109,7 +109,6 @@ const LoginRegister = ({ setOpen, user }) => {
             } else {
                 throw new Error('No token received');
             }
-
             setUser(response.data);
             setError(null);
             setOpen(false);

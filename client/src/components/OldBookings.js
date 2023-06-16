@@ -69,11 +69,11 @@ const OldBookings = () => {
                             <td>{index + 1}</td>
                             <td>{booking.map}</td>
                             <td>{booking.weapon}</td>
-                            <td>{booking.extras.join(", ")}</td>
+                            <td>{booking.extras.length ? booking.extras.join(", ") : "No extras"}</td>
                             <td>{new Date(booking.date).toLocaleDateString()}</td>
                             <td>
-                                <Button variant="warning" onClick={() => handleUpdate(booking._id)}>Update</Button>
-                                <Button variant="danger" onClick={() => handleDelete(booking._id)}>Delete</Button>
+                                <Button className='mx-2' variant="warning" onClick={() => handleUpdate(booking._id)}>Update</Button>
+                                <Button className='mx-2' variant="danger" onClick={() => handleDelete(booking._id)}>Delete</Button>
                             </td>
                         </tr>
                     ))}
