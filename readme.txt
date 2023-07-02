@@ -12,15 +12,16 @@ Extra info:
 
 Frontend : axios, bootstrap, react, react-router-dom, react-datepicker, react-scroll, react-slick (slick-carousel), react-stepper-horizontal
 Backend: bcrypt, cors, dotenv, express, jsonwebstoken, mongoose, mongoose-unique-validator
+
 Screenshots:
-Landing Page
-https://github.com/n3ndor/soloproject/blob/main/screenshots/landing_page.png
+- Landing Page
+![Landing Page](https://github.com/n3ndor/soloproject/raw/main/screenshots/landing_page.png)
 
-Full Validation (Backend + Frontend)
-https://github.com/n3ndor/soloproject/blob/main/screenshots/full_validations.png
+- Full Validation (Backend + Frontend)
+![Full Validation](https://github.com/n3ndor/soloproject/raw/main/screenshots/full_validations.png)
 
-Make new Booking
-https://github.com/n3ndor/soloproject/blob/main/screenshots/confirm.png
+- Make new Booking
+![Make new Booking](https://github.com/n3ndor/soloproject/raw/main/screenshots/confirm.png)
 
-Access CRUD functionality (Create, Read, Update, Delete from database)
-https://github.com/n3ndor/soloproject/blob/main/screenshots/old_bookings.png
+- Access CRUD functionality (Create, Read, Update, Delete from database)
+![Access CRUD functionality](https://github.com/n3ndor/soloproject/raw/main/screenshots/old_bookings.png)
