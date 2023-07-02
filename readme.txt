@@ -15,13 +15,13 @@ Backend: bcrypt, cors, dotenv, express, jsonwebstoken, mongoose, mongoose-unique
 
 Screenshots:
 - Landing Page
-![Landing Page](https://github.com/n3ndor/soloproject/raw/main/screenshots/landing_page.png)
+![Landing Page](https://raw.githubusercontent.com/n3ndor/soloproject/main/screenshots/landing_page.png)
 
 - Full Validation (Backend + Frontend)
-![Full Validation](https://github.com/n3ndor/soloproject/raw/main/screenshots/full_validations.png)
+![Full Validation](https://raw.githubusercontent.com/n3ndor/soloproject/main/screenshots/full_validations.png)
 
 - Make new Booking
-![Make new Booking](https://github.com/n3ndor/soloproject/raw/main/screenshots/confirm.png)
+![Make new Booking](https://raw.githubusercontent.com/n3ndor/soloproject/main/screenshots/confirm.png)
 
 - Access CRUD functionality (Create, Read, Update, Delete from database)
-![Access CRUD functionality](https://github.com/n3ndor/soloproject/raw/main/screenshots/old_bookings.png)
+![Access CRUD functionality](https://raw.githubusercontent.com/n3ndor/soloproject/main/screenshots/old_bookings.png)
