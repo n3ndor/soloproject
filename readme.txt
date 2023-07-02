@@ -8,4 +8,8 @@ Extra info:
 	* This webpage let you to discover a free time activity
 	* You have to Login to access DB, CRUD
 	* Everything is free to use, i don't used money for creating this project
-	
+
+Frontend : axios, bootstrap, react, react-router-dom, react-datepicker, react-scroll, react-slick (slick-carousel), react-stepper-horizontal
+Backend: bcrypt, cors, dotenv, express, jsonwebstoken, mongoose, mongoose-unique-validator
+
+https://www.linkedin.com/feed/update/urn:li:ugcPost:7075913315427696640/
