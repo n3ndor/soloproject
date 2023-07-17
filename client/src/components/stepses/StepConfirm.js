@@ -140,7 +140,6 @@ const StepConfirm = ({ prev, data, setData }) => {
             </div>
         </div>
     );
-
 }
 
 export default StepConfirm;
