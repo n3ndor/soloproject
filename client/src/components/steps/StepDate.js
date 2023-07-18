@@ -19,7 +19,7 @@ const StepDate = ({ next, prev, setData }) => {
             <Container className="d-flex justify-content-center align-items-center">
                 <Row className="justify-content-md-center">
                     <Col md="auto">
-                        <DatePicker inline className='text-black' selected={startDate} onChange={(date) => setStartDate(date)} />
+                        <DatePicker inline className='text-black' selected={startDate} onChange={(date) => setStartDate(date)} minDate={new Date()} />
                     </Col>
                 </Row>
             </Container>

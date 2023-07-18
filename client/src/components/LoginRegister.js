@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { Form, Button, Nav } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import UserContext from './UserContext';
@@ -43,13 +43,7 @@ const LoginRegister = ({ setOpen, user }) => {
         navigate("/");
     };
 
-    useEffect(() => {
-        if (hasSubmitted) {
-            validateFormData();
-        }
-    }, [formData, hasSubmitted]);
-
-    const validateFormData = () => {
+    const validateFormData = useCallback(() => {
         let errors = {};
 
         if (!formData.email) {
@@ -78,7 +72,13 @@ const LoginRegister = ({ setOpen, user }) => {
         setNameError(errors.name || null);
 
         return errors;
-    }
+    }, [formData, showLogin]);
+
+    useEffect(() => {
+        if (hasSubmitted) {
+            validateFormData();
+        }
+    }, [formData, hasSubmitted, validateFormData]);
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
@@ -106,6 +106,7 @@ const LoginRegister = ({ setOpen, user }) => {
             if (response.data && response.data.token) {
                 localStorage.setItem("usertoken", response.data.token);
                 setUser(response.data);
+                setOpen(false);
             } else {
                 throw new Error('No token received');
             }

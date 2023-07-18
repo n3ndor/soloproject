@@ -19,7 +19,7 @@ const StepMap = ({ next, setData, data }) => {
     }
 
     return (
-        <div style={{ "padding": "3%" }}>
+        <div className="step-number" style={{ "padding": "3%" }}>
             <h2>Step 1: Choose Map</h2>
             <Row>
                 {mapNames.map((mapName, index) => (

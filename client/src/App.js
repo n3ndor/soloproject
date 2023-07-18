@@ -22,7 +22,7 @@ function App() {
     <UserContext.Provider value={{ user, setUser, userToken, setUserToken }}>
       <BrowserRouter>
         <div className="App bg">
-          <NavBar />
+          <NavBar key={user} /> {/*adding key will force to unmount and re-mount when user changes*/}
           <Routes>
             <Route path="/" element={
               <>

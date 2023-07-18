@@ -1,7 +1,6 @@
-const BASE_URL = 'http://localhost:8000/api';
 
 export const createBooking = async (data) => {
-    const response = await fetch(`${BASE_URL}/bookings`, {
+    const response = await fetch(`${REACT_APP_API_URL}/bookings`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -128,6 +128,7 @@ const StepConfirm = ({ prev, data, setData }) => {
                                 className='text-black'
                                 selected={data.date}
                                 onChange={(date) => setData({ ...data, date: date })}
+                                minDate={new Date()}
                             />
                         </td>
                     </tr>

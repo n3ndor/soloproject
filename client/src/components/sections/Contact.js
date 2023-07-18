@@ -3,7 +3,7 @@ import { Form, Row, Col, Button } from 'react-bootstrap'
 
 const Contact = () => {
     return (
-        <div className='d-flex flex-wrap' id='contact' style={{ paddingTop: '70px', marginTop: '-70px' }}>
+        <div className='carousel-wrapper' id='contact' style={{ paddingTop: '70px', marginTop: '-70px' }}>
             <div className=''>
                 <h2>Contact Us</h2>
                 <p>We're always here to help. </p>
@@ -39,10 +39,10 @@ const Contact = () => {
                     <Button className='m-2' variant="primary" type="submit">Send</Button>
                 </Form>
             </div>
-            <div className="ml-auto align-self-end" style={{ padding: '10px' }}>
+            <div className="map-container">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d33725.521385073545!2d-55.936573951024464!3d-27.31448168971653!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2spy!4v1686936878801!5m2!1sen!2spy"
-                    width="500" height="450" title='map' style={{ border: 0 }} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+                    title='map' allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
             </div>
         </div>

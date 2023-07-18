@@ -139,6 +139,7 @@ const UpdateBooking = () => {
                                 className='text-black'
                                 selected={new Date(bookingData.date)}
                                 onChange={(date) => setBookingData({ ...bookingData, date: date })}
+                                minDate={new Date()}
                             />
                         </td>
                     </tr>

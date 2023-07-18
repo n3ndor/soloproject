@@ -57,8 +57,6 @@ const OldBookings = () => {
                     <tr>
                         <th>#</th>
                         <th>Map</th>
-                        <th>Weapon</th>
-                        <th>Extras</th>
                         <th>Date</th>
                         <th>Actions</th>
                     </tr>
@@ -66,11 +64,9 @@ const OldBookings = () => {
                 <tbody>
                     {bookings.map((booking, index) => (
                         <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>{booking.map}</td>
-                            <td>{booking.weapon}</td>
-                            <td>{booking.extras.length ? booking.extras.join(", ") : "No extras"}</td>
-                            <td>{new Date(booking.date).toLocaleDateString()}</td>
+                            <td><div className="cell-content">{index + 1}</div></td>
+                            <td><div className="cell-content">{booking.map}</div></td>
+                            <td><div className="cell-content">{new Date(booking.date).toLocaleDateString()}</div></td>
                             <td>
                                 <Button className='mx-2' variant="warning" onClick={() => handleUpdate(booking._id)}>Update</Button>
                                 <Button className='mx-2' variant="danger" onClick={() => handleDelete(booking._id)}>Delete</Button>
